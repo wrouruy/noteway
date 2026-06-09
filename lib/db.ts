@@ -25,10 +25,12 @@ export const query = async (text: string, params?: any[]) => {
   const res = await pool.query(text, params);
   const duration = Date.now() - start;
   
+  /*
   // Optional: Log queries in development
   if (process.env.NODE_ENV !== 'production') {
     console.log('executed query', { text, duration, rows: res.rowCount });
   }
+  */
   
   return res;
 };
