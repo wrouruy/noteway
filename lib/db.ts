@@ -1,4 +1,4 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool } from 'pg';
 
 // Prevent multiple pools from being created during Next.js hot-reloads
 const globalForPg = globalThis as unknown as {

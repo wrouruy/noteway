@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     try {
         // send email
         const mailOptions = {
-            from: 'wrxxv200@gmail.com',
+            from: process.env.EMAIL,
             to: email,
             subject: 'Verifying email',
             text: `Hello!\nPlease comfirm your email via this link:\n${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}\nIf you haven't registered, we strongly advise against clicking this link\nAll the best, bye`,
