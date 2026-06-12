@@ -7,6 +7,9 @@ export async function userBySession(client: PoolClient, sessionToken: string) {
         WHERE token = $1
         LIMIT 1`, [sessionToken]);
 
+    if (session.rows.length <= 0)
+        return null;
+
     const user = await client.query(`
         SELECT * FROM users
         WHERE id = $1

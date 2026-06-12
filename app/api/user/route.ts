@@ -1,34 +1,44 @@
-'use server';
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { query } from "@/lib/db";
 
-export async function POST() {
+import { pool } from "@/lib/db";
+import { userBySession } from "@/lib/userBySession";
+import { validate } from "uuid";
+
+export async function GET() {
     const cookieStore = await cookies();
-    const session_token = cookieStore.get('session_token');
+    const sessionToken = cookieStore.get('session_token')?.value;
 
-    if(!session_token?.value)
-        return NextResponse.json({ ok: false, message: 'please registry' });
-
-    let userId;
+    if (!sessionToken)
+        return NextResponse.json(
+            { ok: true, comment: 'unable get session token', user: null },
+            { status: 400 }
+        );
+    if (!validate(sessionToken))
+        return NextResponse.json(
+            { ok: true, user: null },
+            { status: 400 }
+        );
+    
+    const client = await pool.connect();
     try {
-        userId = await query(`
-            SELECT * FROM sessions 
-            WHERE token = $1
-            LIMIT 1`, [session_token.value]);
-    } catch(err: any) {
-        return NextResponse.json({ ok: false, message: err.message }, { status: 400 });
-    }
+        await client.query(`BEGIN`);
 
-    try {
-        const user = await query(`
-                SELECT * FROM users
-                WHERE id = $1
-                LIMIT 1
-            `, [ userId.rows[0].user_id ]);
+        const user = await userBySession(client, sessionToken);
 
-        return NextResponse.json({ ok: true, user: user.rows[0] });
+        if(!user)
+            return NextResponse.json(
+                { ok: true, user: null },
+                { status: 400 }
+            );
+
+        await client.query(`COMMIT`);
+
+        return NextResponse.json({ ok: true, user: user });
     } catch(err: any) {
-        return NextResponse.json({ ok: false, message: err.message }, { status: 500 });
+        await client.query(`ROLLBACK`);
+        return NextResponse.json({ ok: false, message: err.message });
+    } finally {
+        client.release();
     }
 }

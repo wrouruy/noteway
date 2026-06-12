@@ -8,7 +8,7 @@ interface User {
 interface Response {
     ok: boolean,
     message: string,
-    user: User
+    user: User | null
 }
 
 export default function Home() {
@@ -17,8 +17,11 @@ export default function Home() {
 
     useEffect(() => {
         fetch('/api/user', {
-            method: 'POST'
-        })  .then(res => res.json())
+            method: 'GET'
+        })  .then(res => {
+                console.log(res)
+                return res.json()
+            })
             .then(data => setRes(data))
             .finally(() => setLoad(false))
     }, []);
@@ -30,10 +33,15 @@ export default function Home() {
             (
                 res ? (
                     res.ok ?
-                    (<h1>hello, {res.user.name}</h1>) :
-                    (<h1>unknown error: {res.message}</h1>)
-                ) :
-                (<h1>some problems has occured while receiving data <br /> please reload page</h1>)
+                        (
+                            res.user ?
+                            (<h1>hello, {res.user.name}</h1>) :
+                            (<h1>please, registry</h1>)
+                        ) :
+                        (
+                            <h1>some error has occured: {res.message}</h1>
+                        )
+                ) : (<h1>some problems has occured while receiving data <br /> please reload page</h1>)
             )}
         </div>
     );

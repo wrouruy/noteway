@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { userBySession } from "@/lib/userBySession";
 import { pool, query } from "@/lib/db";
+import { validate } from "uuid";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -12,17 +13,22 @@ export async function GET(req: NextRequest, { params }: PageProps) {
 
     const { id } = await params;
 
+    if (!validate(id)) // check if id is uuid string
+        return NextResponse.json(
+            { ok: true, note: null },
+            { status: 404 }
+        );
+
     try {
         const noteRes = await query(`
             SELECT * FROM notes
             WHERE id = $1
             LIMIT 1`, [id]);
         
-        if (!noteRes.rows[0])
-            return NextResponse.json({ ok: true, note: null });
+        if (noteRes.rows[0] <= 0)
+            return NextResponse.json({ ok: true, note: null }, { status: 404 });
 
         return NextResponse.json({ ok: true, note: noteRes.rows[0] })
-        
     } catch(err: any) {
         return NextResponse.json({ ok: false, message: err.message });
     }
