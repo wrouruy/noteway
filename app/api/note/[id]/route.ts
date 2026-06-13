@@ -41,7 +41,16 @@ export async function PUT(req: NextRequest, { params }: PageProps) {
     const sessionToken = cookieStore.get('session_token')?.value;
 
     if (!sessionToken) // check if session token is exist
-        return NextResponse.json({ ok: false, message: 'session token is required' });
+        return NextResponse.json(
+            { ok: false, message: 'session token is required' },
+            { status: 400 }
+        );
+
+    if (!validate(sessionToken))
+        return NextResponse.json(
+            { ok: false, messge: 'user account is not found' },
+            { status: 400 }
+        );
 
     // parse json
     let newContent;
@@ -61,37 +70,46 @@ export async function PUT(req: NextRequest, { params }: PageProps) {
     if (typeof newContent !== 'string') // if correct type
         return NextResponse.json({ ok: false, message: 'content field must be string type' }, { status: 400 });
 
-    const note = await pool.connect();
+    const client = await pool.connect();
 
     try {
-        await note.query("BEGIN");
+        await client.query("BEGIN");
 
         // get note by json id
-        const noteRes = await note.query(`
+        const noteRes = await client.query(`
             SELECT * FROM notes
             WHERE id = $1`, [id]);
 
-        const user = await userBySession(note, sessionToken);
+        const user = await userBySession(client, sessionToken);
+
+        if (!user) {
+            await client.query(`ROLLBACK`)
+            return NextResponse.json(
+                { ok: false, message: 'user account is not found' },
+                { status: 400 }
+            );
+        }
 
         if (noteRes.rows[0].user_id !== user.id) { // compare if user is owner
-            await note.query("ROLLBACK");
+            await client.query("ROLLBACK");
             return NextResponse.json({ ok: false, message: 'permission denied' }, { status: 400 });
         }
 
-        const updatedNote = await note.query(`
+        const updatedNote = await client.query(`
             UPDATE notes
-            SET content = $1
+            SET content = $1,
+                last_update = NOW()
             WHERE id = $2
             RETURNING *`, [newContent, id]);
 
-        await note.query("COMMIT");
+        await client.query("COMMIT");
 
         return NextResponse.json({ ok: true, note: updatedNote.rows[0] });
     } catch(err: any) {
-        await note.query("ROLLBACK;");
+        await client.query("ROLLBACK");
         return NextResponse.json({ ok: false, message: err.message });
     } finally {
-        note.release();
+        client.release();
     }
 }
 

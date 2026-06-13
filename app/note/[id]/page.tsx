@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect, use } from "react"
+import { useState, useEffect, use, JSX } from "react";
+import ReactMarkdown from 'react-markdown';
 
 interface Response {
     ok: boolean,
@@ -39,7 +40,11 @@ export default function Note ({ params }: Props) {
                 (
                     note.ok ? (
                         note.note ?
-                            (<p>{note.note.content}</p>) :
+                            (
+                            <div>
+                                <ReactMarkdown>{note.note.content}</ReactMarkdown>
+                            </div>
+                            ) :
                             (<p>status 404<br />cannot find note</p>)
                     ) :
                     (<h1>error: {note.message}</h1>)

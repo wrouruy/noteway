@@ -9,14 +9,9 @@ export async function GET() {
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get('session_token')?.value;
 
-    if (!sessionToken)
+    if (!sessionToken || !validate(sessionToken))
         return NextResponse.json(
-            { ok: true, comment: 'unable get session token', user: null },
-            { status: 400 }
-        );
-    if (!validate(sessionToken))
-        return NextResponse.json(
-            { ok: true, user: null },
+            { ok: true, user: null, message: 'session token is invalid' },
             { status: 400 }
         );
     

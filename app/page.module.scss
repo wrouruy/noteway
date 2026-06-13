@@ -1,0 +1,32 @@
+.home {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #121212;
+    color: rgb(213, 213, 213);
+    padding: 10px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.noteContainer {
+    width: 100%;
+    min-height: 200px;
+    background-color: #0d0d0d;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+
+    &:empty {
+        &::after {
+            content: 'there\'s empty';
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            font-size: 18px;
+            font-weight: 700;
+        }
+    }
+}
