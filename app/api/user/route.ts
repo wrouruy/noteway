@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import { pool } from "@/lib/db";
@@ -12,8 +12,7 @@ export async function GET() {
     if (!sessionToken || !validate(sessionToken))
         return NextResponse.json(
             { ok: true, user: null, message: 'session token is invalid' },
-            { status: 400 }
-        );
+            { status: 400 });
     
     const client = await pool.connect();
     try {

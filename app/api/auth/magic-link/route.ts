@@ -5,34 +5,30 @@ import { transporter } from '@/lib/mail';
 import { v7 as uuidv7 } from 'uuid';
 
 export async function POST(req: NextRequest) {
-    const { username, email } = await req.json(); // get json body arg
+    const token: string = uuidv7();
 
-    // check if fields is suitable
-    if (typeof username !== 'string' || !username)
-        return NextResponse.json({ ok: false, message: 'invalid username' }, { status: 400 });
-
-    if (typeof email !== 'string' || !email.includes('@'))
-        return NextResponse.json({ ok: false, message: 'email is not support' }, { status: 400 });
-
-    const token: string = uuidv7(); // get uuid
-
-    await query(`
-        DELETE FROM verify
-        WHERE email = $1
-    `, [email]);
-    
     try {
+        const { username, email } = await req.json(); // get json body arg
+
+        // check if fields is suitable
+        if (typeof username !== 'string' || !username)
+            return NextResponse.json({ ok: false, message: 'invalid username' }, { status: 400 });
+
+        if (typeof email !== 'string' || !email.includes('@'))
+            return NextResponse.json({ ok: false, message: 'invalid email' }, { status: 400 });
+
+        await query(`
+            DELETE FROM verify
+            WHERE email = $1
+        `, [email]);
+    
         // write in the db, for further checing
         await query(`
             INSERT INTO verify (username, email, token )
             VALUES ($1, $2, $3)`,
             [username, email, token]
         )
-    } catch(err: any) {
-        return NextResponse.json({ ok: false, message: err.message }, { status: 500 });
-    }
 
-    try {
         // send email
         const mailOptions = {
             from: process.env.EMAIL,
@@ -43,6 +39,7 @@ export async function POST(req: NextRequest) {
 
         await transporter.sendMail(mailOptions);
 
+        return NextResponse.json({ ok: true });
     } catch(err: any) {
             await query(`
                 DELETE FROM verify
@@ -50,10 +47,7 @@ export async function POST(req: NextRequest) {
             `, [token]);
 
             return NextResponse.json(
-            { ok: false, message: err.message || 'Internal Server Error' }, 
-            { status: 500 }
-        );
+                { ok: false, message: err.message || 'Internal Server Error' }, 
+                { status: 500 });
     }
-    return NextResponse.json({ ok: true });
-
 }
