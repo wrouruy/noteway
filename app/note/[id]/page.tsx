@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, use, JSX } from "react";
+import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup'
 import ReactMarkdown from 'react-markdown';
 
 interface Response {
@@ -42,6 +43,7 @@ export default function Note ({ params }: Props) {
                         note.note ?
                             (
                             <div>
+                                <ConfirmPopup actionName="are you sure?"  func={() => console.log('aa')}/>
                                 <ReactMarkdown>{note.note.content}</ReactMarkdown>
                             </div>
                             ) :

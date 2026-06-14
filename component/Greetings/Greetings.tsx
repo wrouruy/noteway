@@ -15,5 +15,5 @@ export default function Greetings ({ name }: Props) {
         greet = 'good evening'
     else greet = 'good night'
 
-    return <h2>{greet}, {name}!</h2>
+    return <h1>{greet}, {name}!</h1>
 }

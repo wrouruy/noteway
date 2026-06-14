@@ -1,0 +1,37 @@
+.popup {
+    width: 300px;
+
+    background-color: rgb(41, 41, 41);
+    color: rgb(212, 212, 212);
+    border: 3px solid rgb(114, 114, 114);
+
+    position: fixed;
+    translate: -50% -50%;
+    top: 50%;
+    left: 50%;
+
+    border-radius: 10px;
+    overflow: hidden;
+
+    h1 {
+        margin: 20px;
+        font-size: 24px;
+    }
+
+    div {
+        display: flex;
+
+        button {
+            height: 30px;
+            width: 50%;
+            background-color: transparent;
+            border-width: 2px 1.5px 0 0;
+            border-style: solid;
+            border-color: rgb(114, 114, 114);
+            outline: none;
+            color: rgb(164, 164, 164);
+            font-weight: 600;
+            cursor: pointer;
+        }
+    }
+}

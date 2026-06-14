@@ -1,6 +1,11 @@
 'use client'
-import { useState, useEffect, JSX } from 'react';
+import { useState, useEffect } from 'react';
 import Greetings from '@/component/Greetings/Greetings';
+import confirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
+import { cutString } from '@/lib/cutString';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.scss'
 
 interface UserRes {
@@ -39,7 +44,6 @@ export default function Home() {
 
         if (!data?.ok)
             return setError(data.message);
-        console.log(data)
         setUser(data);
     }
 
@@ -69,6 +73,13 @@ export default function Home() {
         })();
     }, []);
 
+    function cutNoteRows(note: string): string[] {
+        const rows = note.split('\n');
+        let res: string[] = [];
+        rows.forEach(e => res.push(cutString(e, 15)));
+        return res;
+    }
+
     return (
         <div className={styles.home}>
             {loading ?
@@ -81,10 +92,18 @@ export default function Home() {
                     )
                 )}
 
+                <div className={styles.noteContainerTop}>
+                    <button className={styles.createNote} >create</button>
+                    <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
+                </div>
                 <div className={styles.noteContainer}>
                     {notes && (
                         notes.note &&
-                            (notes.note.map(el => <h1 key={el.id}>{el.content}</h1> ))
+                            (notes.note.map(e => (
+                                <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
+                                    {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
+                                </a>
+                            )))
                     )}
                 </div>
                 </>

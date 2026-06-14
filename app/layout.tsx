@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+import { config } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+config.autoAddCss = false;
+
 import "./globals.css";
 
 // const montserrat = Montserrat({
@@ -15,6 +19,8 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: "noteway",
 };
+
+
 
 export default function RootLayout({
   children,
