@@ -9,6 +9,7 @@ interface PageProps {
 
 export async function GET(req: NextRequest, { params }: PageProps){
     const { username } = await params;
+    const emptyAvatar = await fs.readFile( path.join(process.cwd(), 'public', 'empty-avatar.png') );
 
     if (!username || typeof username != 'string')
         return NextResponse.json(
@@ -25,9 +26,9 @@ export async function GET(req: NextRequest, { params }: PageProps){
         const imgBuffer = await fs.readFile(imgPath);
 
         if (!imgBuffer)
-            return NextResponse.json(
-                { ok: false, message: 'unable to get avatar' },
-                { status: 500 });
+            return new NextResponse(emptyAvatar, {
+                headers: { 'Content-Type': 'image/png' },
+            })
 
         return new NextResponse(imgBuffer, {
             headers: { 'Content-Type': 'image/png' },
