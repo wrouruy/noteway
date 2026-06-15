@@ -13,6 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "cookies-next": "^6.1.1",
+    "googleapis": "^173.0.0",
     "next": "16.2.7",
     "nodemailer": "^8.0.10",
     "pg": "^8.21.0",

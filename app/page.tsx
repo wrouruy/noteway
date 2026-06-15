@@ -1,11 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+
 import Greetings from '@/component/Greetings/Greetings';
 import confirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
 import { cutString } from '@/lib/cutString';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.scss'
 
 interface UserRes {
@@ -88,24 +90,37 @@ export default function Home() {
                 <>
                 {user && (
                     user.user && (
-                        <Greetings name={user.user.name} />
+                        <div className={styles.user}>
+                            <Image 
+                                src={`/api/user/${user.user.name}/avatar`}
+                                alt={`${user.user.name}'s avatar`}
+                                width={250}
+                                height={250}
+                            />
+                            <div>
+                                <Greetings name={user.user.name} />
+                                <p>{user.user.email}</p>
+                            </div>
+                        </div>
                     )
                 )}
 
-                <div className={styles.noteContainerTop}>
-                    <button className={styles.createNote} >create</button>
-                    <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
-                </div>
-                <div className={styles.noteContainer}>
-                    {notes && (
-                        notes.note &&
-                            (notes.note.map(e => (
-                                <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
-                                    {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
-                                </a>
-                            )))
-                    )}
-                </div>
+                {notes && (
+                    <div className={styles.note}>
+                        <div className={styles.notesContainerTop}>
+                            <button className={styles.createNote}> <FontAwesomeIcon icon={faPlus}/> </button>
+                            <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
+                        </div>
+                        <div className={styles.notesContainer}>
+                                {notes.note &&
+                                    (notes.note.map(e => (
+                                        <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
+                                            {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
+                                        </a>
+                                    )))}
+                        </div>
+                    </div>
+                )}
                 </>
             )}
         </div>

@@ -5,12 +5,40 @@
     color: rgb(213, 213, 213);
     padding: 20px 30px;
     display: flex;
-    flex-direction: column;
     gap: 10px;
-
 }
 
-.noteContainerTop {
+.user {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+
+    div {
+        width: 100%;
+        font-size: 15px;
+
+        p {
+            font-size: 20px;
+            color: #9b9b9b;
+        }
+    }
+
+    img {
+        border-radius: 125px;
+        margin: 20px 0;
+    }
+}
+
+
+.note {
+    min-width: 500px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notesContainerTop {
     width: 100%;
     display: flex;
     margin-top: 20px;
@@ -35,9 +63,9 @@
 }
 
 
-.noteContainer {
+.notesContainer {
     width: 100%;
-    min-height: 200px;
+    min-height: 80%;
     background-color: #0d0d0d;
     border-radius: 15px;
 
