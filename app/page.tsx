@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.scss'
 
+import Cmatrix from '@/component/Cmatrix/Cmatrix'
+
 interface UserRes {
     ok: boolean,
     message: string,
@@ -84,6 +86,8 @@ export default function Home() {
 
     return (
         <div className={styles.home}>
+            <Cmatrix />
+            
             {loading ?
             (<h1>loading...</h1>) :
             (

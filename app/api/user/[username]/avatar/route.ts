@@ -22,6 +22,11 @@ export async function GET(req: NextRequest, { params }: PageProps){
             WHERE name = $1
             LIMIT 1`, [username]);
 
+        if (user.rows.length <= 0)
+            return new NextResponse(emptyAvatar, {
+                headers: { 'Content-Type': 'image/png' },
+            })
+
         const imgPath = path.join(process.cwd(), 'public', 'avatars', user.rows[0].avatar_name);
         const imgBuffer = await fs.readFile(imgPath);
 
@@ -34,8 +39,8 @@ export async function GET(req: NextRequest, { params }: PageProps){
             headers: { 'Content-Type': 'image/png' },
         })
     } catch(err: any) {
-        return NextResponse.json(
-            { ok: false, message: err.message },
-            { status: 400 });
+        return new NextResponse(emptyAvatar, {
+            headers: { 'Content-Type': 'image/png' },
+        })
     }
 }

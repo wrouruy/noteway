@@ -1,31 +1,44 @@
 .home {
     width: 100%;
     min-height: 100vh;
-    background-color: #121212;
+    // background-color: #121212;
     color: rgb(213, 213, 213);
     padding: 20px 30px;
     display: flex;
     gap: 10px;
+    align-items: flex-start;
 }
 
 .user {
     width: 50%;
+    background-color: #2323236a;
     display: flex;
     flex-direction: column;
+    border-radius: 15px;
+    padding: 20px;
 
     div {
         width: 100%;
         font-size: 15px;
 
+        h1 {
+            font-size: clamp(10px, 2.5vw, 30px);
+        }
+
         p {
-            font-size: 20px;
+            font-size: clamp(10px, 2vw, 25px);
             color: #9b9b9b;
+            margin-bottom: 70px;
         }
     }
 
     img {
+        width: 250px;
+        height: 250px;
         border-radius: 125px;
         margin: 20px 0;
+        object-fit: cover;
+        display: flex;
     }
 }
 
@@ -65,8 +78,8 @@
 
 .notesContainer {
     width: 100%;
-    min-height: 80%;
-    background-color: #0d0d0d;
+    min-height: 80vh;
+    background-color: #141414;
     border-radius: 15px;
 
     flex-wrap: wrap;
@@ -77,7 +90,7 @@
 
     &:empty {
         &::after {
-            content: 'there\'s empty';
+            content: 'there\'s empty...';
             display: flex;
             justify-content: center;
             align-items: center;
@@ -96,4 +109,39 @@
     border-radius: 10px;
     text-decoration: none;
     color: inherit;
+}
+
+@media screen and (max-width: 850px){
+    .user {
+        width: 100%;
+
+        div {
+            h1 {
+                font-size: 25px;
+            }
+
+            p {
+                font-size: 22px;
+                color: #9b9b9b;
+            }
+        }
+    }
+
+    .note {
+        width: 100%;
+        margin-top: 20px;
+    }
+    .notesContainer {
+        min-height: 0;
+    }
+
+    .notesContainerTop {
+        button {
+            padding: 10px 25px;
+        }
+    }
+
+    .home {
+        flex-direction: column;
+    }
 }
