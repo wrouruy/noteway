@@ -13,6 +13,11 @@
     border-radius: 10px;
     overflow: hidden;
 
+    display: flex;
+    flex-direction: column;
+
+    animation: popup 0.15s 1;
+
     h1 {
         margin: 20px;
         font-size: 24px;
@@ -33,5 +38,13 @@
             font-weight: 600;
             cursor: pointer;
         }
+    }
+}
+
+@keyframes popup {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
     }
 }

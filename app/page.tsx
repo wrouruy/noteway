@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import Greetings from '@/component/Greetings/Greetings';
-import confirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
+import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
 import { cutString } from '@/lib/cutString';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,6 +39,10 @@ export default function Home() {
     const [error, setError] = useState<string>('');
     const [user, setUser]   = useState<UserRes | undefined>(undefined);
     const [notes, setNotes] = useState<NoteRes | undefined>(undefined);
+    const [ showCreateNote, setShowCreateNote ] = useState<boolean>(false);
+    const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
+
+    const router = useRouter();
 
     async function fetchUser () {
         const res = await fetch('/api/user', { method: 'GET' });
@@ -78,16 +83,29 @@ export default function Home() {
     }, []);
 
     function cutNoteRows(note: string): string[] {
+        if (!note)
+            return [];
         const rows = note.split('\n');
         let res: string[] = [];
         rows.forEach(e => res.push(cutString(e, 15)));
         return res;
     }
 
+    function createNote() {
+        fetch('/api/note', {
+            method: 'POST'
+        })  .then(res => res.json())
+            .then(data => {
+                if (data?.ok)
+                    router.push(`/note/${data.note.id}`);
+            })
+    }
+
     return (
         <div className={styles.home}>
             <Cmatrix />
-            
+            <ConfirmPopup isOpen={showCreateNote} onCancel={() => setShowCreateNote(false)} onConfirm={createNote} title='to create a note' />
+
             {loading ?
             (<h1>loading...</h1>) :
             (
@@ -112,7 +130,7 @@ export default function Home() {
                 {notes && (
                     <div className={styles.note}>
                         <div className={styles.notesContainerTop}>
-                            <button className={styles.createNote}> <FontAwesomeIcon icon={faPlus}/> </button>
+                            <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
                             <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
                         </div>
                         <div className={styles.notesContainer}>

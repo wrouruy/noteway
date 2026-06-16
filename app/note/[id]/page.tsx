@@ -43,7 +43,6 @@ export default function Note ({ params }: Props) {
                         note.note ?
                             (
                             <div>
-                                <ConfirmPopup actionName="are you sure?"  func={() => console.log('aa')}/>
                                 <ReactMarkdown>{note.note.content}</ReactMarkdown>
                             </div>
                             ) :
