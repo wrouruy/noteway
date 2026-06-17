@@ -41,7 +41,6 @@ export default function Home() {
     const [user, setUser]   = useState<UserRes | undefined>(undefined);
     const [notes, setNotes] = useState<NoteRes | undefined>(undefined);
     const [ showCreateNote, setShowCreateNote ] = useState<boolean>(false);
-    const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
 
     const router = useRouter();
 
