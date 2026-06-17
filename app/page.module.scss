@@ -1,7 +1,6 @@
 .home {
     width: 100%;
     min-height: 100vh;
-    // background-color: #121212;
     color: rgb(213, 213, 213);
     display: flex;
     flex-direction: column;
@@ -12,13 +11,20 @@
         min-height: 100vh;
         display: flex;
         padding: 20px 30px;
-        gap: 10px;
+        gap: 20px;
         align-items: flex-start;
     }
 }
 
-.user {
+.leftBlock {
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user {
+    width: 100%;
     background-color: #2323236a;
     display: flex;
     flex-direction: column;
@@ -30,11 +36,11 @@
         font-size: 15px;
 
         h1 {
-            font-size: clamp(10px, 2.5vw, 30px);
+            font-size: clamp(10px, 2vw, 25px);
         }
 
         p {
-            font-size: clamp(10px, 2vw, 25px);
+            font-size: clamp(5px, 1.5vw, 20px);
             color: #9b9b9b;
             margin-bottom: 70px;
         }
@@ -47,6 +53,27 @@
         margin: 20px 0;
         object-fit: cover;
         display: flex;
+    }
+}
+
+.viewedNotes {
+    width: 100%;
+    background-color: #2323236a;
+    padding: 20px;
+    border-radius: 15px;
+    gap: 10px;
+}
+.viewedNotesContainer {
+    width: 100%;
+    overflow-x: scroll;
+    height: 200px;
+
+    &:empty {
+        height: auto;
+
+        &::after {
+            content: 'there\'s empty...';
+        }
     }
 }
 
@@ -129,7 +156,39 @@
     }
 }
 
+.completeRegistr {
+    width: 100%;
+    min-height: 250px;
+    background-color: #141414;
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 15px;
+    padding: 15px;
+
+    a {
+        width: 30%;
+        background-color: #0a0a0a;
+        text-decoration: none;
+        color: #FFFF;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        transition: 200ms;
+
+        &:hover {
+            background-color: #040404;
+        }
+    }
+}
+
 @media screen and (max-width: 850px){
+    .leftBlock {
+        width: 100%;
+    }
     .user {
         width: 100%;
 

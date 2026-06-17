@@ -111,8 +111,9 @@ export default function Home() {
                 (<h1>loading...</h1>) :
                 (
                     <>
-                    {user && (
-                        user.user && (
+                    <div className={styles.leftBlock}>
+                    {user ? (
+                        user.user ? (
                             <div className={styles.user}>
                                 <Image 
                                     src={`/api/user/${user.user.name}/avatar`}
@@ -125,25 +126,53 @@ export default function Home() {
                                     <p>{user.user.email}</p>
                                 </div>
                             </div>
+                        ) :
+                        (
+                            <div className={styles.user}>
+                                <div>
+                                    <h1>who are you?</h1>
+                                    <p>we are unable to recognize you...</p>
+                                </div>
+                            </div>
                         )
+                    ) : (
+                        <h1>unknown error <br /> please reload page</h1>
                     )}
+                    <div className={styles.viewedNotes}>
+                        <h3>previously viewed notes</h3>
+                        <div className={styles.viewedNotesContainer}></div>
+                    </div>
+                    </div>
 
-                    {notes && (
-                        <div className={styles.note}>
-                            <div className={styles.notesContainerTop}>
-                                <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
-                                <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
-                            </div>
-                            <div className={styles.notesContainer}>
-                                    {notes.note &&
-                                        (notes.note.map(e => (
-                                            <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
-                                                {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
-                                            </a>
-                                        )))}
-                            </div>
-                        </div>
-                    )}
+                    <div className={styles.note}>
+                        {notes ? (
+                            <>
+                                <div className={styles.notesContainerTop}>
+                                    <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
+                                    <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
+                                </div>
+                                <div className={styles.notesContainer}>
+                                        {notes.note &&
+                                            (notes.note.map(e => (
+                                                <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
+                                                    {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
+                                                </a>
+                                            )))}
+                                
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className={styles.completeRegistr}>
+                                    <h2>please complete the registration</h2>
+                                    <a href="/auth/signup">sign up</a>
+                                    <p>or</p>
+                                    <a href="/auth/login">log in</a>
+
+                                </div>
+                            </>
+                        )}
+                    </div>
                     </>
                 )}
             </main>
