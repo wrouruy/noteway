@@ -11,7 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.scss'
 
-import Cmatrix from '@/component/Cmatrix/Cmatrix'
+import Cmatrix from '@/component/Cmatrix/Cmatrix';
+import Footer from '@/component/Footer/Footer';
 
 interface UserRes {
     ok: boolean,
@@ -106,45 +107,48 @@ export default function Home() {
             <Cmatrix />
             <ConfirmPopup isOpen={showCreateNote} onCancel={() => setShowCreateNote(false)} onConfirm={createNote} title='to create a note' />
 
-            {loading ?
-            (<h1>loading...</h1>) :
-            (
-                <>
-                {user && (
-                    user.user && (
-                        <div className={styles.user}>
-                            <Image 
-                                src={`/api/user/${user.user.name}/avatar`}
-                                alt={`${user.user.name}'s avatar`}
-                                width={250}
-                                height={250}
-                            />
-                            <div>
-                                <Greetings name={user.user.name} />
-                                <p>{user.user.email}</p>
+            <main>
+                {loading ?
+                (<h1>loading...</h1>) :
+                (
+                    <>
+                    {user && (
+                        user.user && (
+                            <div className={styles.user}>
+                                <Image 
+                                    src={`/api/user/${user.user.name}/avatar`}
+                                    alt={`${user.user.name}'s avatar`}
+                                    width={250}
+                                    height={250}
+                                />
+                                <div>
+                                    <Greetings name={user.user.name} />
+                                    <p>{user.user.email}</p>
+                                </div>
+                            </div>
+                        )
+                    )}
+
+                    {notes && (
+                        <div className={styles.note}>
+                            <div className={styles.notesContainerTop}>
+                                <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
+                                <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
+                            </div>
+                            <div className={styles.notesContainer}>
+                                    {notes.note &&
+                                        (notes.note.map(e => (
+                                            <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
+                                                {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
+                                            </a>
+                                        )))}
                             </div>
                         </div>
-                    )
+                    )}
+                    </>
                 )}
-
-                {notes && (
-                    <div className={styles.note}>
-                        <div className={styles.notesContainerTop}>
-                            <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
-                            <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
-                        </div>
-                        <div className={styles.notesContainer}>
-                                {notes.note &&
-                                    (notes.note.map(e => (
-                                        <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
-                                            {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
-                                        </a>
-                                    )))}
-                        </div>
-                    </div>
-                )}
-                </>
-            )}
+            </main>
+            <Footer />
         </div>
     );
 }

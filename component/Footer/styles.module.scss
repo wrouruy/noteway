@@ -1,0 +1,90 @@
+.footer {
+    width: 100%;
+    min-height: 300px;
+    background-color: #313131b9;
+    gap: 10vw;
+    padding: 20px 40px;
+
+    display: flex;
+
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        margin-right: 10px;
+    }
+
+    a {
+        text-decoration: none;
+        color: #FFFF;
+    }
+
+    svg {
+        width: 25px;
+        height: 25px;
+        margin: 0 20px;
+    }
+
+    ul {
+        margin-left: 20px;
+    }
+
+    input, button {
+        height: 100%;
+        padding: 5px;
+        border: none;
+        outline: none;
+        margin: 0 5px;
+        border-radius: 5px;
+    }
+
+    input {
+        padding: 10px 20px;
+    }
+
+    button {
+        height: 40px;
+        width: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+    }
+}
+
+.logoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.listsContainer {
+    display: flex;
+    gap: 10vw;
+}
+
+@media screen and (max-width: 850px) {
+    .footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .logoContainer {
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    .listsContainer {
+        width: 100%;
+        justify-content: center;
+        gap: 100px;
+    }
+}
