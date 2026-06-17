@@ -1,5 +1,8 @@
 'use client'
-import { useState, useEffect, use, JSX } from "react";
+import { useState, useEffect, use } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'; 
+
 import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup'
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -69,6 +72,7 @@ export default function Note ({ params }: Props) {
 
     return (
         <div className={style.note}>
+            <main>
             {loading ? 
             (<h1>loading...</h1>) :
             (
@@ -77,20 +81,25 @@ export default function Note ({ params }: Props) {
                         note.ok ? (
                             note.note ?
                                 (
-                                    <main>
+                                    <>
                                         <div className={style.ownerContainer}>
-                                            <Image
-                                                src={`/api/user/${user?.user?.name}/avatar`}
-                                                alt='avatar'
-                                                width={60}
-                                                height={60}
-                                            />
-                                            by {user?.user?.name}
+                                            <button onClick={() => history.back()}>
+                                                <FontAwesomeIcon icon={faAngleLeft} />
+                                            </button>
+                                            <div>
+                                                <Image
+                                                    src={`/api/user/${user?.user?.name}/avatar`}
+                                                    alt='avatar'
+                                                    width={60}
+                                                    height={60}
+                                                />
+                                                by {user?.user?.name}
+                                            </div>
                                         </div>
                                         <div className={style.noteContainer}>
                                             <ReactMarkdown>{note.note.content}</ReactMarkdown>
                                         </div>
-                                    </main>
+                                    </>
                                 ) :
                                 (<p>status 404<br />cannot find note</p>)
                         ) :
@@ -98,6 +107,7 @@ export default function Note ({ params }: Props) {
                     ) :
                     (<h1>unknown error, please reload page</h1>)
             )}
+            </main>
         </div>
 
     )

@@ -19,7 +19,7 @@
     width: 100%;
     display: flex;
     height: 100px;
-    gap: 10px;
+    gap: 5vw;
     align-items: center;
     color: #FFFF;
     background-color: #252525;
@@ -30,5 +30,27 @@
         width: 60px;
         height: 60px;
         border-radius: 30px;
+    }
+    button {
+        padding: 20px;
+        color: #FFF;
+        border: none;
+        background-color: #3f3f3f;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 300ms;
+
+        svg {
+            font-size: 15px;
+        }
+
+        &:hover {
+            background-color: #525252;
+        }
+    }
+    div {
+        gap: 10px;
+        display: flex;
+        align-items: center;
     }
 }
