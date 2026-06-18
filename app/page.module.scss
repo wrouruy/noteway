@@ -158,7 +158,7 @@
 
 .completeRegistr {
     width: 100%;
-    min-height: 250px;
+    height: 250px;
     background-color: #141414;
     border-radius: 15px;
 
@@ -219,5 +219,10 @@
         main {
             flex-direction: column;
         }
+    }
+    
+    .completeRegistr {
+        width: 100%;
+        font-size: clamp(10px, 2vw, 25px);
     }
 }

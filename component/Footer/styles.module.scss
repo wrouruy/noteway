@@ -88,3 +88,12 @@
         gap: 100px;
     }
 }
+
+@media screen and (max-width: 600px) {
+    .logoContainer {
+        justify-content: start;
+        .column {
+            display: none;
+        }
+    }
+}

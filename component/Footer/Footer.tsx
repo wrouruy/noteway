@@ -30,7 +30,7 @@ export default function Footer () {
                     </div>
                 </nav>
 
-                <div className="column">
+                <div className={style.column}>
                     <h3> subscribe for update </h3>
                     <div className="row">
                         <input type="text" placeholder='enter your email...' ref={emaiInputRef}/>
