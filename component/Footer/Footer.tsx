@@ -19,7 +19,7 @@ export default function Footer () {
             <div className={style.logoContainer}>
                 <nav>
                     <div className="row">
-                        <Image src={logoPic} alt="logo" />
+                        <Image width={40} height={40} src={logoPic} alt="logo" />
                         <h1>Noteway</h1>
                     </div>
                     <h4>share your notes without any troubles</h4>
@@ -32,7 +32,7 @@ export default function Footer () {
 
                 <div className={style.column}>
                     <h3> subscribe for update </h3>
-                    <div className="row">
+                    <div className={style.row}>
                         <input type="text" placeholder='enter your email...' ref={emaiInputRef}/>
                         <button> <FontAwesomeIcon icon={faAngleRight} onClick={sendEmail}/> </button>
                     </div>

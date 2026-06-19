@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   sassOptions: {
     implementation: 'sass-embedded',
   },
-  allowedDevOrigins: ['192.168.0.103']
+  allowedDevOrigins: ['172.20.10.9']
 };
 
 export default nextConfig;
