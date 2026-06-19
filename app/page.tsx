@@ -168,7 +168,6 @@ export default function Home() {
                                     <a href="/auth/signup">sign up</a>
                                     <p>or</p>
                                     <a href="/auth/login">log in</a>
-
                                 </div>
                             </>
                         )}

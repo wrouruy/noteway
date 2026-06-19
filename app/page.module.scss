@@ -79,7 +79,6 @@
 
 
 .note {
-    min-width: 500px;
     width: 50%;
     display: flex;
     flex-direction: column;
@@ -157,7 +156,7 @@
 }
 
 .completeRegistr {
-    width: 100%;
+    max-width: 100%;
     height: 250px;
     background-color: #141414;
     border-radius: 15px;
@@ -206,7 +205,6 @@
 
     .note {
         width: 100%;
-        margin-top: 20px;
     }
 
     .notesContainerTop {
@@ -220,9 +218,9 @@
             flex-direction: column;
         }
     }
-    
+
     .completeRegistr {
         width: 100%;
-        font-size: clamp(10px, 2vw, 25px);
+        font-size: 10px;
     }
 }
