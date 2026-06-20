@@ -4,8 +4,8 @@
   box-sizing: border-box;
 
   &::selection {
-    background-color: white;
-    color: #121212;
+    color: rgb(255, 255, 255);
+    background-color: rgb(132, 132, 132);
   }
 }
 

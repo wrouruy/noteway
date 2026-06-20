@@ -15,8 +15,6 @@ export const metadata: Metadata = {
   title: "noteway",
 };
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
