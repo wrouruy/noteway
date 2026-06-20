@@ -1,0 +1,21 @@
+.verify {
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    padding: 20px 0;
+    color: #F0F0F0;
+    display: flex;
+
+    h1 {
+        font-size: 35px;
+    }
+    p {
+        color: #ffffff87;
+    }
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 17px;
+    }
+}

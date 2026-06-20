@@ -1,6 +1,8 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import styles from './verify.module.scss';
+import Cmatrix from '@/component/Cmatrix/Cmatrix';
 
 interface Response {
     ok: boolean,
@@ -22,32 +24,24 @@ export default function Verify() {
             .then((data) => setRes(data))
             .finally(() => setLoad(false));
     }, []);
-
-    if(!token)
-        return <h1>token is required</h1>;
-
-    if (!res)
-        return (
-            <div>
-                <h1>iternal server error: field is empty <br />registry gone bad</h1>
-            </div>
-        )
-    
-    console.log(res);
     
     return (
-        <div>
-            {loading && (
-                <h1>loading...</h1>
-            )}
+        <div className={styles.verify}>
+            {token ? 
+                loading ?
+                    ( <h1>loading...</h1> ) :
+                    (
+                        res ?
+                            (
+                                res.ok ?
+                                    ( <div><h1>registration was successful!</h1> <p>you can close this tab</p></div> ) :
+                                    ( <div><h1>occured error</h1> <p>{res.message}</p></div> )
+                            ) :
+                            (<h1> unknown error<p>please reload page</p></h1>)
+                    ) :
+            ( <h1>token is required!</h1> )}
 
-            {!res.ok && (
-                <h1>client error: {res.message}</h1>
-            )}
-
-            {res.ok && (
-                <h1>registry done well</h1>
-            )}
+            <Cmatrix />
         </div>
     )
 }

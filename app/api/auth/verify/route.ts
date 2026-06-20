@@ -1,25 +1,33 @@
 'use server';
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from 'next/headers';
-import { v7 as uuidv7 } from "uuid";
+import { v7 as uuidv7, validate } from "uuid";
 
 import { pool } from "@/lib/db";
 import type { PoolClient } from 'pg';
 
 export async function POST(req: NextRequest) {
-    const { token } = await req.json();
     const cookieStore = await cookies();
 
     const client = await pool.connect();
 
     try {
+        const { token } = await req.json();
+
+        if (!validate(token))
+            return NextResponse.json(
+                { ok: false, message: 'invalid token' },
+                { status: 400 });
+
         await client.query("BEGIN");
 
         const verifyUser = await searchUserByToken(client, token);
 
         if (!verifyUser){ // if token is invalid
             await client.query("ROLLBACK");
-            return NextResponse.json({ ok: false, message: 'token is invalid' }, { status: 400 })
+            return NextResponse.json(
+                { ok: false, message: 'invalid token' },
+                { status: 400 });
         }
 
         // creating user
