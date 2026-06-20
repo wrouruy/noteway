@@ -15,35 +15,22 @@ export async function POST(req: NextRequest) {
     const client = await pool.connect();
 
     try {
-        const { username, email } = await req.json(); // get json body arg
-
-        // check if fields is suitable
-        if (typeof username !== 'string' || !username)
-            return NextResponse.json({ ok: false, message: 'invalid username' }, { status: 400 });
+        const { email } = await req.json(); // get json body arg
 
         if (typeof email !== 'string' || !validateEmail(email))
             return NextResponse.json({ ok: false, message: 'invalid email' }, { status: 400 });
 
         await client.query(`BEGIN`);
 
-        // check if username or email are busy
+        // check if email is busy
         const busy = await client.query(`
             SELECT * FROM users
-            WHERE name = $1 OR email = $2`, [username, email]);
+            WHERE email = $1`, [email]);
         
-        if (busy.rows.length > 0) {
-            const existingUser = busy.rows[0];
-            const conflicts: string[] = [];
-
-            if (email === existingUser.email) conflicts.push('email');
-            if (username === existingUser.name) conflicts.push('username');
-
-            const busyMessage = `${conflicts.join(' and ')} is busy`;
-
+        if (busy.rows.length > 0)
             return NextResponse.json(
-                { ok: false, message: busyMessage },
+                { ok: false, message: 'email is busy' },
                 { status: 400 });
-        }
 
         await client.query(`
             DELETE FROM verify
@@ -52,9 +39,9 @@ export async function POST(req: NextRequest) {
     
         // write in the db, for further checking
         await client.query(`
-            INSERT INTO verify ( username, email, token )
-            VALUES ($1, $2, $3)`,
-            [username, email, token]
+            INSERT INTO verify ( email, token )
+            VALUES ($1, $2)`,
+            [email, token]
         );
 
         // send email
@@ -76,5 +63,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(
                 { ok: false, message: err.message || 'Internal Server Error' }, 
                 { status: 500 });
+    } finally {
+        client.release()
     }
 }

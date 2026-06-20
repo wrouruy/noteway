@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
         }
 
         // creating user
-        const { username, email } = verifyUser;
+        const { email } = verifyUser;
+        const username = 'user-' + uuidv7().slice(0, 8)
         const userId = await createUser(client, username, email);
 
         // create user session
