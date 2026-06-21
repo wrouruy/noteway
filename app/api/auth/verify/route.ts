@@ -32,8 +32,18 @@ export async function POST(req: NextRequest) {
 
         // creating user
         const { email } = verifyUser;
-        const username = 'user-' + uuidv7().slice(0, 8)
-        const userId = await createUser(client, username, email);
+
+        const user = await client.query(`
+            SELECT * FROM users
+            WHERE email = $1`, [email]);
+
+        let userId;
+
+        if (user.rows.length <= 0) { // creating user 
+            const username = 'user-' + uuidv7().slice(0, 8)
+            userId = (await createUser(client, username, email)).rows[0].id;
+        } else
+            userId = user.rows[0].id;
 
         // create user session
         const sessionToken = uuidv7(); // get uuid

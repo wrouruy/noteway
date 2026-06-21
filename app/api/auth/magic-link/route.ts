@@ -22,15 +22,15 @@ export async function POST(req: NextRequest) {
 
         await client.query(`BEGIN`);
 
-        // check if email is busy
-        const busy = await client.query(`
-            SELECT * FROM users
-            WHERE email = $1`, [email]);
+        // // check if email is busy
+        // const busy = await client.query(`
+        //     SELECT * FROM users
+        //     WHERE email = $1`, [email]);
         
-        if (busy.rows.length > 0)
-            return NextResponse.json(
-                { ok: false, message: 'email is busy' },
-                { status: 400 });
+        // if (busy.rows.length > 0)
+        //     return NextResponse.json(
+        //         { ok: false, message: 'email is busy' },
+        //         { status: 400 });
 
         await client.query(`
             DELETE FROM verify
