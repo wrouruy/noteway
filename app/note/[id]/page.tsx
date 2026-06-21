@@ -92,6 +92,7 @@ export default function Note ({ params }: Props) {
                                                     alt='avatar'
                                                     width={60}
                                                     height={60}
+                                                    loading="eager"
                                                 />
                                                 by {user?.user?.name}
                                             </div>

@@ -18,6 +18,8 @@
     animation: ErrorPopup 300ms 1;
     transition: 300ms;
 
+    z-index: 9999;
+
     button {
         height: 100%;
         padding: 5px 10px;

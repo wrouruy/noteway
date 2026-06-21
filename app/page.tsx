@@ -1,14 +1,15 @@
 'use client'
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 
 import Greetings from '@/component/Greetings/Greetings';
 import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
 import { cutString } from '@/lib/cutString';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.scss'
 
 import Cmatrix from '@/component/Cmatrix/Cmatrix';
@@ -41,6 +42,9 @@ export default function Home() {
     const [user, setUser]   = useState<UserRes | undefined>(undefined);
     const [notes, setNotes] = useState<NoteRes | undefined>(undefined);
     const [ showCreateNote, setShowCreateNote ] = useState<boolean>(false);
+    const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
+
+    const [selected, setSelected] = useState<string[]>([]);
 
     const router = useRouter();
 
@@ -101,10 +105,39 @@ export default function Home() {
             })
     }
 
+    async function deleteNotes() {         
+        try {
+            const promises = selected.map(async (e) => {             
+                const res = await fetch('/api/note/' + e, { method: 'DELETE' });             
+                const data = await res.json();             
+                if (!res.ok)
+                    console.log(data.message);         
+            });
+            await Promise.all(promises);
+            await fetchNotes();
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    }
+
+    function selectClick(
+        e: React.MouseEvent<HTMLAnchorElement>,
+        id: string
+    ) {
+        if (e.ctrlKey || selected.length > 0) {
+            e.preventDefault();
+
+            setSelected(prev =>
+                prev.includes(id)
+                    ? prev.filter(x => x !== id)
+                    : [...prev, id]
+            );
+        }
+    }
+
     return (
         <div className={styles.home}>
             <Cmatrix />
-            <ConfirmPopup isOpen={showCreateNote} onCancel={() => setShowCreateNote(false)} onConfirm={createNote} title='to create a note' />
 
             <main>
                 {loading ?
@@ -120,6 +153,7 @@ export default function Home() {
                                     alt={`${user.user.name}'s avatar`}
                                     width={250}
                                     height={250}
+                                    loading="eager"
                                 />
                                 <div>
                                     <Greetings name={user.user.name} />
@@ -149,14 +183,23 @@ export default function Home() {
                             <>
                                 <div className={styles.notesContainerTop}>
                                     <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
-                                    <button className={styles.deleteNote}> <FontAwesomeIcon icon={faTrash}/> </button>
+                                    <button className={styles.deleteNote} onClick={() => setShowDelNote(true)} > <FontAwesomeIcon icon={faTrash}/> </button>
                                 </div>
                                 <div className={styles.notesContainer}>
                                         {notes.note &&
                                             (notes.note.map(e => (
-                                                <a className={styles.noteItem} key={e.id} href={'/note/' + e.id}>
-                                                    {cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}
-                                                </a>
+                                                <Link
+                                                    className={`
+                                                        ${styles.noteItem}
+                                                        ${selected.includes(e.id) ? styles.selectedNotes : ''}
+                                                    `}
+                                                    href={'/note/' + e.id}
+                                                    onClick={(event) => selectClick(event, e.id)}
+                                                    key={e.id}
+                                                >
+                                                    <p>{cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}</p>
+                                                    <div> <FontAwesomeIcon icon={faCheck} /> </div>
+                                                </Link>
                                             )))}
                                 
                                 </div>
@@ -175,6 +218,10 @@ export default function Home() {
                     </>
                 )}
             </main>
+            
+            <ConfirmPopup isOpen={showCreateNote} onCancel={() => setShowCreateNote(false)} onConfirm={createNote} title='to create a note' />
+            <ConfirmPopup isOpen={showDelNote} onCancel={() => setShowDelNote(false)} onConfirm={deleteNotes} title='to delete the notes' />
+
             <Footer />
         </div>
     );
