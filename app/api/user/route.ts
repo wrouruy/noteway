@@ -50,6 +50,8 @@ export async function PUT (req: NextRequest) {
     try {
         const { username } = await req.json();
 
+        await client.query(`BEGIN`);
+
         const busy = await client.query(`
             SELECT * FROM users
             WHERE name = $1`, [username]);
@@ -69,6 +71,8 @@ export async function PUT (req: NextRequest) {
             WHERE id = $2
             RETURNING *`, [username, user.id]);
         
+        await client.query(`COMMIT`);
+
         return NextResponse.json(
             { ok: true, user: res.rows[0] });
 
