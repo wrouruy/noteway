@@ -5,6 +5,7 @@ import Image from "next/image";
 import ErrorPopup from "@/component/ErrorPopup/ErrorPopup";
 import Footer from '@/component/Footer/Footer';
 import style from './settings.module.scss';
+import Cmatrix from "@/component/Cmatrix/Cmatrix";
 
 interface UserRes {
     ok: true,
@@ -95,11 +96,12 @@ export default function Settings () {
                 setLoad(false);
             }
         })();
-    });
+    }, []);
 
     return (
         <>
         <div className={style.settings}>
+            <Cmatrix />
             {
                 loading ?
                     (<h1>loading...</h1>) :
@@ -129,13 +131,14 @@ export default function Settings () {
                                             />
                                         </div>
                                     </div>
-
-                                    {/* <div className={style.col}>
-                                        <h1>Session</h1>
-                                    </div> */}
                                 </div>
-                                <div>
-                                    <Image src={`/api/user/${user.user?.name}/avatar`} width={200} height={200} alt="avatar"/>
+                                <div className={style.avatarContainer}>
+                                    <Image src={`/api/user/${user.user?.name}/avatar`}
+                                        width={200}
+                                        height={200}
+                                        alt="avatar"
+                                        loading="eager"
+                                    />
                                 </div>
                                 </>
                             )
