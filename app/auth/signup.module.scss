@@ -6,6 +6,7 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
+    padding: 20px;
 
     h1 {
         width: 30%;
@@ -65,4 +66,15 @@
         }
     }
 
+}
+
+@media screen and (max-width: 700px) {
+    .signup {
+        justify-content: start;
+        
+        h1,
+        .signupContainer {
+            width: 100%;
+        }
+    }
 }

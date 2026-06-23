@@ -6,14 +6,15 @@ import Image from 'next/image';
 
 import Greetings from '@/component/Greetings/Greetings';
 import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
+import ErrorPopup from "@/component/ErrorPopup/ErrorPopup";
+import Cmatrix from '@/component/Cmatrix/Cmatrix';
+import Footer from '@/component/Footer/Footer';
 import { cutString } from '@/lib/cutString';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
-import styles from './page.module.scss'
 
-import Cmatrix from '@/component/Cmatrix/Cmatrix';
-import Footer from '@/component/Footer/Footer';
+import styles from './page.module.scss'
 
 interface UserRes {
     ok: boolean,
@@ -36,9 +37,14 @@ interface NoteRes {
     }[] | null
 }
 
+interface Error {
+    message: string,
+    type: number
+}
+
 export default function Home() {
     const [loading, setLoad] = useState<boolean>(true);
-    const [error, setError] = useState<string>('');
+    const [ errors, setErrors ] = useState<Error[] | null>(null);
     const [user, setUser]   = useState<UserRes | undefined>(undefined);
     const [notes, setNotes] = useState<NoteRes | undefined>(undefined);
     const [ showCreateNote, setShowCreateNote ] = useState<boolean>(false);
@@ -48,15 +54,19 @@ export default function Home() {
 
     const router = useRouter();
 
+    function addError(message: string, type: number = 0) {
+        setErrors(prev => [ ...(prev || []), { message: message, type: type } ]);
+    }
+
     async function fetchUser () {
         const res = await fetch('/api/user', { method: 'GET' });
         const data = await res.json();
 
         if (!data)
-            return setError('unknown error, please reload page');
+            return addError('unknown error, please reload page');
 
         if (!data?.ok)
-            return setError(data.message);
+            return addError(data.message);
         setUser(data);
     }
 
@@ -65,10 +75,10 @@ export default function Home() {
         const data = await res.json();
 
         if (!data)
-            return setError('unknown error, please reload page');
+            return addError('unknown error, please reload page');
 
         if (!data?.ok)
-            return setError(data.message);
+            return;
 
         setNotes(data);
     }
@@ -79,7 +89,7 @@ export default function Home() {
                 await fetchUser();
                 await fetchNotes();
             } catch (err) {
-                setError('A network error occurred.');
+                addError("Network error");
             } finally {
                 setLoad(false);
             }
@@ -116,7 +126,7 @@ export default function Home() {
             await Promise.all(promises);
             await fetchNotes();
         } catch (error) {
-            console.error("Network error:", error);
+            addError("Network error");
         }
     }
 
@@ -208,9 +218,7 @@ export default function Home() {
                             <>
                                 <div className={styles.completeRegistr}>
                                     <h2>please complete the registration</h2>
-                                    <a href="/auth/signup">sign up</a>
-                                    <p>or</p>
-                                    <a href="/auth/login">log in</a>
+                                    <Link href="/auth"> Go </Link>
                                 </div>
                             </>
                         )}
@@ -221,6 +229,17 @@ export default function Home() {
             
             <ConfirmPopup isOpen={showCreateNote} onCancel={() => setShowCreateNote(false)} onConfirm={createNote} title='to create a note' />
             <ConfirmPopup isOpen={showDelNote} onCancel={() => setShowDelNote(false)} onConfirm={deleteNotes} title='to delete the notes' />
+
+            { errors && errors.length > 0 && (
+                errors.map((e, i) =>
+                    <ErrorPopup 
+                        onClose={() => setErrors(e => e && e.filter((_, index) => index !== i))}
+                        message={e.message}
+                        type={e.type}
+                        index={i}
+                        key={i}
+                    />)
+            )}
 
             <Footer />
         </div>
