@@ -1,0 +1,80 @@
+.settings {
+    min-height: 100vh;
+    color: #F0F0F0;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10vw;
+    
+
+    span {
+        color: #9b9b9b;
+        font-size: 17px;
+        display: flex;
+        margin: 10px;
+
+        &::before {
+            content: '⎯ '
+        }
+    }
+
+    div {
+        margin: 10px 0;
+    }
+    img {
+        border-radius: 100px;
+        object-fit: cover;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    input, button {
+        outline: none;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    input {
+        min-width: 200px;
+    }
+    button {
+        background-color: rgb(105, 197, 93);
+        cursor: pointer;
+        transition: 300ms;
+        &:hover {
+            filter: brightness(0.8);
+        }
+    }
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.updateAvatar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input {
+        display: none;
+    }
+    label {
+        text-align: center;
+        padding: 10px;
+        background-color: #4a4a4a;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+}

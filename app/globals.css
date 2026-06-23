@@ -9,6 +9,10 @@
   }
 }
 
+body {
+  background-color: #101010;
+}
+
 .row {
   display: flex;
   flex-direction: row;
