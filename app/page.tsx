@@ -12,7 +12,7 @@ import Footer from '@/component/Footer/Footer';
 import { cutString } from '@/lib/cutString';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faCheck, faGear } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './page.module.scss'
 
@@ -121,7 +121,7 @@ export default function Home() {
                 const res = await fetch('/api/note/' + e, { method: 'DELETE' });             
                 const data = await res.json();             
                 if (!res.ok)
-                    console.log(data.message);   
+                    addError(data.message);   
             });
             await Promise.all(promises);
             await fetchNotes();
@@ -157,6 +157,7 @@ export default function Home() {
                     <div className={styles.leftBlock}>
                     {user ? (
                         user.user ? (
+                            <>
                             <div className={styles.user}>
                                 <Image 
                                     src={`/api/user/${user.user.name}/avatar`}
@@ -170,6 +171,8 @@ export default function Home() {
                                     <p>{user.user.email}</p>
                                 </div>
                             </div>
+                            <Link className={styles.goToSettings} href="/settings"> <FontAwesomeIcon icon={faGear} /> </Link>
+                            </>
                         ) :
                         (
                             <div className={styles.user}>
@@ -193,7 +196,7 @@ export default function Home() {
                             <>
                                 <div className={styles.notesContainerTop}>
                                     <button className={styles.createNote} onClick={() => setShowCreateNote(true)}> <FontAwesomeIcon icon={faPlus}/> </button>
-                                    <button className={styles.deleteNote} onClick={() => setShowDelNote(true)} > <FontAwesomeIcon icon={faTrash}/> </button>
+                                    <button className={styles.deleteNote} onClick={() => setShowDelNote(selected.length > 0)} > <FontAwesomeIcon icon={faTrash}/> </button>
                                 </div>
                                 <div className={styles.notesContainer}>
                                         {notes.note &&
