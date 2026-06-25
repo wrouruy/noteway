@@ -153,6 +153,8 @@
     display: flex; 
     flex-direction: column;
 
+    font-size: smaller;
+
     p {
         width: 100%;
         display: flex;
@@ -164,7 +166,7 @@
         }
     }
 
-    div {
+    .selectNote {
         display: none;
         position: absolute;
         bottom: 15px;

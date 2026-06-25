@@ -11,6 +11,7 @@ import Cmatrix from '@/component/Cmatrix/Cmatrix';
 import Footer from '@/component/Footer/Footer';
 import { cutString } from '@/lib/cutString';
 
+import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faCheck, faGear } from '@fortawesome/free-solid-svg-icons';
 
@@ -101,7 +102,7 @@ export default function Home() {
             return [];
         const rows = note.split('\n');
         let res: string[] = [];
-        rows.forEach(e => res.push(cutString(e, 15)));
+        rows.forEach(e => res.push(cutString(e, 20)));
         return res;
     }
 
@@ -210,8 +211,8 @@ export default function Home() {
                                                     onClick={(event) => selectClick(event, e.id)}
                                                     key={e.id}
                                                 >
-                                                    <p>{cutNoteRows(e.content).map(e => <h3 key={e}> {e} <br/> </h3>)}</p>
-                                                    <div> <FontAwesomeIcon icon={faCheck} /> </div>
+                                                    <div>{cutNoteRows(e.content).map((e, i) => <ReactMarkdown key={i}>{e}</ReactMarkdown>)}</div>
+                                                    <div className={styles.selectNote}> <FontAwesomeIcon icon={faCheck} /> </div>
                                                 </Link>
                                             )))}
                                 

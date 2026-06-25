@@ -12,8 +12,8 @@ export default function NotFound () {
                 <h1>404</h1>
                 <p>Oops page not found</p>
                 <div>
-                    <button onClick={() => history.back()}>go back</button>
-                    <Link href='/'>go home</Link>
+                    <button onClick={() => history.back()}>Go back</button>
+                    <Link href='/'>Go home</Link>
                 </div>
             </main>
             <Footer />

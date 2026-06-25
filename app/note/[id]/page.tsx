@@ -1,12 +1,14 @@
 'use client'
 import { useState, useEffect, use } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'; 
+import { faAngleLeft, faPen, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons'; 
 
-import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup'
+import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
+import ErrorPopup from "@/component/ErrorPopup/ErrorPopup";
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import style from './note.module.scss'
+import Link from "next/link";
 
 interface NoteRes {
     ok: boolean,
@@ -34,25 +36,48 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
+interface Error {
+    message: string,
+    type: number
+}
+
 export default function Note ({ params }: Props) {
     const [ loading, setLoad ] = useState<boolean>(true);
-    const [ note, setNote ] = useState<NoteRes | null>(null);
-    const [ user, setUser ] = useState<UserRes | null>(null);
-    
+    const [ errors, setErrors ] = useState<Error[] | null>(null);
+    const [ note, setNote ]    = useState<NoteRes | null>(null);
+    const [ owner, setOwner ]  = useState<UserRes | null>(null);
+    const [ user, setUser ]    = useState<UserRes | null>(null);
+
+    const [ edit, setEdit ]    = useState<boolean>(false);
+    const [ editContent, setEditContent ] = useState<string | undefined>(undefined);
+    const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
+
     const { id } = use(params);
+
+    function addError(message: string, type: number = 0) {
+        setErrors(prev => [ ...(prev || []), { message: message, type: type } ]);
+    }
 
     async function fetchNote() {
         return fetch(`/api/note/${id}`, { method: "GET" })  
             .then(res => res.json())
             .then(data => {
-                setNote(data)
+                setNote(data);
+                setEditContent(data?.note.content);
                 return data;
             })
     };
 
-    async function fetchUser(user_id: number) {
+    async function fetchOwner(user_id: number) {
         fetch(`/api/user/by-id/${user_id}`, {
             method: "GET",
+        })  .then(res => res.json())
+            .then(data => setOwner(data))
+    }
+
+    async function fetchUser() {
+        fetch(`/api/user`, {
+            method: 'GET'
         })  .then(res => res.json())
             .then(data => setUser(data))
     }
@@ -61,14 +86,63 @@ export default function Note ({ params }: Props) {
         ( async () => {
             try {
                 const noteData = await fetchNote();
-                await fetchUser(noteData?.note?.user_id)
+                await fetchOwner(noteData?.note?.user_id)
+                await fetchUser();
             } catch(err: any) {
-                alert(err.message);
+                addError(err.message);
             } finally {
                 setLoad(false);
             }
         })()
     }, []);
+
+    async function toEditMode() {
+        if (!edit)
+            return setEdit(true);
+
+        if (!editContent)
+            return;
+
+        addError('please wait', 2);
+        try {
+            const res = await fetch(`/api/note/${id}`,
+                { method: 'PUT', body: JSON.stringify({ content: editContent })
+            });
+
+            const data = await res.json();
+            
+            if (!data)
+                return addError('Unknown error, try again in hour');
+            else if(!data.ok)
+                return addError(data.message);
+
+        } catch(err) {
+            addError('Please check your internet connection');
+        }
+
+        addError('Changed successfully!', 1);
+        setEdit(false);
+        setEditContent('');
+        await fetchNote();
+    }
+
+    async function deleteNote() {
+        console.log('sasasa')
+        try {
+            const res = await fetch(`/api/note/${id}`, { method: "DELETE" });
+            const data = await res.json();
+
+            if (!data)
+                addError('Unknown error, try again in hour');
+
+            if (!data.ok)
+                addError(data.message);
+
+            document.referrer ? history.back() : location.href = '/';
+        } catch(err) {
+            addError('Please check your internet connection');
+        }
+    }
 
     return (
         <div className={style.note}>
@@ -83,32 +157,71 @@ export default function Note ({ params }: Props) {
                                 (
                                     <>
                                         <div className={style.ownerContainer}>
-                                            <button onClick={() => history.back()}>
-                                                <FontAwesomeIcon icon={faAngleLeft} />
-                                            </button>
                                             <div>
+                                                <button onClick={() => history.back()}>
+                                                    <FontAwesomeIcon icon={faAngleLeft} />
+                                                </button>
                                                 <Image
-                                                    src={`/api/user/${user?.user?.name}/avatar`}
+                                                    src={`/api/user/${owner?.user?.name}/avatar`}
                                                     alt='avatar'
                                                     width={60}
                                                     height={60}
                                                     loading="eager"
                                                 />
-                                                by {user?.user?.name}
+                                                by {owner?.user?.name}
+                                            </div>
+                                            <div>
+                                                {user ?
+                                                    (
+                                                        (user.user?.id === owner?.user?.id) && (
+                                                            <>
+                                                            <button onClick={toEditMode}>
+                                                                <FontAwesomeIcon icon={edit ? faCheck : faPen}/>
+                                                            </button>
+                                                            <button onClick={() => setShowDelNote(true)}>
+                                                                <FontAwesomeIcon icon={faTrash} />
+                                                            </button>
+                                                            </>
+                                                        )
+                                                    ) :
+                                                    (
+                                                        <Link href="/auth">registry</Link>
+                                                    )}
                                             </div>
                                         </div>
                                         <div className={style.noteContainer}>
-                                            <ReactMarkdown>{note.note.content}</ReactMarkdown>
+                                            {edit ?
+                                                    (<textarea value={editContent} onChange={(e) => setEditContent(e.target.value)}></textarea>) :
+                                                    (<ReactMarkdown>{note.note.content}</ReactMarkdown>)}
                                         </div>
                                     </>
                                 ) :
-                                (<p>status 404<br />cannot find note</p>)
+                                (
+                                    <div className={style.err404}>
+                                        <h1>404</h1>
+                                        <p>It looks like you're looking for the wrong note</p>
+                                        <button onClick={() => history.back()}>Go back</button>
+                                    </div>
+                                )
                         ) :
                         (<h1>error: {note.message}</h1>)
                     ) :
                     (<h1>unknown error, please reload page</h1>)
             )}
             </main>
+
+            <ConfirmPopup isOpen={showDelNote} onCancel={() => setShowDelNote(false)} onConfirm={deleteNote} title='to delete this note' />
+        
+            { errors && errors.length > 0 && (
+                errors.map((e, i) =>
+                    <ErrorPopup
+                        onClose={() => setErrors(e => e && e.filter((_, index) => index !== i))}
+                        message={e.message}
+                        type={e.type}
+                        index={i}
+                        key={i}
+                    />)
+            )}
         </div>
 
     )
