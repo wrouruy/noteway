@@ -49,7 +49,7 @@ export default function Note ({ params }: Props) {
     const [ user, setUser ]    = useState<UserRes | null>(null);
 
     const [ edit, setEdit ]    = useState<boolean>(false);
-    const [ editContent, setEditContent ] = useState<string | undefined>(undefined);
+    const [ editContent, setEditContent ] = useState<string>('');
     const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
 
     const { id } = use(params);
@@ -191,7 +191,7 @@ export default function Note ({ params }: Props) {
                                         </div>
                                         <div className={style.noteContainer}>
                                             {edit ?
-                                                    (<textarea value={editContent} onChange={(e) => setEditContent(e.target.value)}></textarea>) :
+                                                    (<textarea value={editContent ? editContent : undefined} onChange={(e) => setEditContent(e.target.value)}></textarea>) :
                                                     (<ReactMarkdown>{note.note.content}</ReactMarkdown>)}
                                         </div>
                                     </>

@@ -40,10 +40,11 @@ export async function POST(req: NextRequest) {
         let userId;
 
         if (user.rows.length <= 0) { // creating user 
-            const username = 'user-' + uuidv7().slice(0, 8)
-            userId = (await createUser(client, username, email)).rows[0].id;
+            const username = 'user-' + uuidv7().slice(0, 8);
+            userId = await createUser(client, username, email);
         } else
             userId = user.rows[0].id;
+        
 
         // create user session
         const sessionToken = uuidv7(); // get uuid
@@ -79,7 +80,7 @@ async function searchUserByToken (client: PoolClient, token: string) {
         SELECT * FROM verify
         WHERE token = $1 AND expires_at > NOW()`, [token]);
 
-    return res.rows[0];
+    return res.rows[0]
 }
 
 async function deleteVerifyUser(client: PoolClient, id: number) {
