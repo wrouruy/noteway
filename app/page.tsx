@@ -211,7 +211,7 @@ export default function Home() {
                                                     onClick={(event) => selectClick(event, e.id)}
                                                     key={e.id}
                                                 >
-                                                    <div>{cutNoteRows(e.content).map((e, i) => <ReactMarkdown key={i}>{e}</ReactMarkdown>)}</div>
+                                                    <div className={styles.contentContainer}>{cutNoteRows(e.content).map((e, i) => <ReactMarkdown key={i}>{e}</ReactMarkdown>)}</div>
                                                     <div className={styles.selectNote}> <FontAwesomeIcon icon={faCheck} /> </div>
                                                 </Link>
                                             )))}

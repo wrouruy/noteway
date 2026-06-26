@@ -8,7 +8,7 @@ interface Props {
     onCancel: () => void
 }
 
-export default function ComfirnPopup ({ isOpen, title, onConfirm, onCancel }: Props) {
+export default function ConfirmPopup ({ isOpen, title, onConfirm, onCancel }: Props) {
     if (!isOpen) return null;
 
     return (

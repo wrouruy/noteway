@@ -6,6 +6,7 @@ import ErrorPopup from "@/component/ErrorPopup/ErrorPopup";
 import Footer from '@/component/Footer/Footer';
 import style from './settings.module.scss';
 import Cmatrix from "@/component/Cmatrix/Cmatrix";
+import ConfirmPopup from "@/component/ConfirmPopup/ConfirmPopup";
 
 interface UserRes {
     ok: true,
@@ -27,6 +28,9 @@ export default function Settings () {
     const [ user, setUser ] = useState<UserRes | null>(null);
     const [ username, setUsername ] = useState<string>('');
     const [ errors, setErrors ] = useState<Error[] | null>(null);
+
+    const [ showLogout, setShowLogout ] = useState<boolean>(false);
+    const [ showDelAccount, setShowDelAccount ] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -72,6 +76,34 @@ export default function Settings () {
 
         } catch(err: any) {
             addError(err.message);
+        }
+    }
+
+    async function logout() {
+        try {
+            const res = await fetch('/api/user/logout', { method: 'GET' });
+            const data = await res.json();
+
+            if (!data.ok)
+                addError(data.message);
+
+            router.push('/');            
+        } catch(err) {
+            addError('Please, check your internet connection');
+        }
+    }
+
+    async function deleteAccount() {
+        try {
+            const res = await fetch('/api/user', { method: 'DELETE' });
+            const data = await res.json();
+
+            if (!data.ok)
+                addError(data.message);
+
+            router.push('/');
+        } catch(err) {
+            addError('Please, check your internet connection');
         }
     }
 
@@ -130,6 +162,11 @@ export default function Settings () {
                                                 onChange={(e) => changeAvatar(e.target.files)}
                                             />
                                         </div>
+
+                                        <div className={style.deleteAccount}>
+                                            <button onClick={() => setShowLogout(true)}>Log out</button>
+                                            <button onClick={() => setShowDelAccount(true)}>Delete account</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={style.avatarContainer}>
@@ -155,7 +192,10 @@ export default function Settings () {
                     />)
             )}
         </div>
-        
+
+        <ConfirmPopup isOpen={showLogout} onCancel={() => setShowLogout(false)} onConfirm={logout} title='to log out' />
+        <ConfirmPopup isOpen={showDelAccount} onCancel={() => setShowDelAccount(false)} onConfirm={deleteAccount} title='to delete the account' />
+
         <Footer />
         </>
     )

@@ -155,7 +155,7 @@
 
     font-size: smaller;
 
-    p {
+    .contentContainer {
         width: 100%;
         display: flex;
 
@@ -168,6 +168,7 @@
 
     .selectNote {
         display: none;
+        flex-direction: column;
         position: absolute;
         bottom: 15px;
         right: 15px;
@@ -208,7 +209,7 @@
     }
 }
 .selectedNotes {
-    div {
+    .selectNote {
         display: flex;
     }
 }
