@@ -11,7 +11,7 @@ export async function GET() {
 
     if (!sessionToken || !validate(sessionToken))
         return NextResponse.json(
-            { ok: true, user: null, message: 'session token is invalid' },
+            { ok: true, user: null, message: 'invalid session token' },
             { status: 400 });
     
     const client = await pool.connect();
@@ -81,6 +81,61 @@ export async function PUT (req: NextRequest) {
         return NextResponse.json(
             { ok: false, message: err.message || 'Iternal server error' },
             { status: 500 });
+    } finally {
+        client.release();
+    }
+}
+
+export async function DELETE () {
+    const cookiesStore = await cookies();
+    const sessionToken = cookiesStore.get('session_token')?.value;
+
+    if (!sessionToken || !validate(sessionToken))
+        return NextResponse.json(
+            { ok: false, message: 'invalid session token' },
+            { status: 400 });
+
+    const client = await pool.connect();
+    try {
+        await client.query(`BEGIN`);
+
+        const userID = await client.query(`
+            SELECT user_id FROM sessions
+            WHERE token = $1
+            LIMIT 1`, [sessionToken]);
+        
+        if (userID.rows.length <= 0)
+            return NextResponse.json(
+                { ok: false, message: 'session is not found' },
+                { status: 400 });
+
+        await client.query(`DELETE FROM sessions WHERE user_id = $1`, [userID.rows[0].user_id]);
+        await client.query(`DELETE FROM notes WHERE user_id = $1`, [userID.rows[0].user_id]);
+
+        const delUser = await client.query(`
+            DELETE FROM users
+            WHERE id = $1
+            RETURNING *`, [userID.rows[0].user_id]);
+        
+        if (delUser.rows.length <= 0) {
+            await client.query(`ROLLBACK`);
+            return NextResponse.json(
+                { ok: false, message: 'user is not found' },
+                { status: 400 });
+        }
+
+        cookiesStore.delete('session_token');
+
+        await client.query(`COMMIT`);
+
+        return NextResponse.json({ ok: true });
+
+    } catch(err: any) {
+        await client.query(`ROLLBACK`);
+        return NextResponse.json(
+            { ok: false, message: err.message || 'Iternal server error' },
+            { status: 500 });
+    
     } finally {
         client.release();
     }

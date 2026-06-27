@@ -81,13 +81,14 @@ export default function Settings () {
 
     async function logout() {
         try {
+            addError('Please, wait', 2);
             const res = await fetch('/api/user/logout', { method: 'GET' });
             const data = await res.json();
 
             if (!data.ok)
-                addError(data.message);
+                return addError(data.message);
 
-            router.push('/');            
+            router.push('/');
         } catch(err) {
             addError('Please, check your internet connection');
         }
@@ -95,11 +96,12 @@ export default function Settings () {
 
     async function deleteAccount() {
         try {
+            addError('Please, wait', 2);
             const res = await fetch('/api/user', { method: 'DELETE' });
             const data = await res.json();
 
             if (!data.ok)
-                addError(data.message);
+                return addError(data.message);
 
             router.push('/');
         } catch(err) {

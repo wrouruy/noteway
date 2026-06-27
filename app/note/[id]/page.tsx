@@ -63,7 +63,7 @@ export default function Note ({ params }: Props) {
             .then(res => res.json())
             .then(data => {
                 setNote(data);
-                setEditContent(data?.note.content);
+                setEditContent(data?.note ? data.note.content : '');
                 return data;
             })
     };
@@ -86,6 +86,7 @@ export default function Note ({ params }: Props) {
         ( async () => {
             try {
                 const noteData = await fetchNote();
+                console.log(noteData)
                 await fetchOwner(noteData?.note?.user_id)
                 await fetchUser();
             } catch(err: any) {
@@ -127,16 +128,15 @@ export default function Note ({ params }: Props) {
     }
 
     async function deleteNote() {
-        console.log('sasasa')
         try {
             const res = await fetch(`/api/note/${id}`, { method: "DELETE" });
             const data = await res.json();
 
             if (!data)
-                addError('Unknown error, try again in hour');
+                return addError('Unknown error, try again in hour');
 
             if (!data.ok)
-                addError(data.message);
+                return addError(data.message);
 
             document.referrer ? history.back() : location.href = '/';
         } catch(err) {
