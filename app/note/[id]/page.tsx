@@ -86,7 +86,23 @@ export default function Note ({ params }: Props) {
         ( async () => {
             try {
                 const noteData = await fetchNote();
-                console.log(noteData)
+
+                const viewedNotesString = localStorage.getItem('viewedNotes');
+                let viewedNotes = [];
+
+                try {
+                    viewedNotes = viewedNotesString ? JSON.parse(viewedNotesString) : [];
+                } catch (error) {
+                    console.error("Error parsing viewedNotes from localStorage", error);
+                }
+
+                let updatedNotes = viewedNotes.filter((s: string) => s !== id);
+
+                if (noteData.note)
+                    updatedNotes = [...updatedNotes, id];
+
+                localStorage.setItem('viewedNotes', JSON.stringify(updatedNotes));
+
                 await fetchOwner(noteData?.note?.user_id)
                 await fetchUser();
             } catch(err: any) {

@@ -43,6 +43,11 @@ interface Error {
     type: number
 }
 
+interface ViewedNotes {
+    id: string,
+    content: string
+}
+
 export default function Home() {
     const [loading, setLoad] = useState<boolean>(true);
     const [ errors, setErrors ] = useState<Error[] | null>(null);
@@ -50,6 +55,8 @@ export default function Home() {
     const [notes, setNotes] = useState<NoteRes | undefined>(undefined);
     const [ showCreateNote, setShowCreateNote ] = useState<boolean>(false);
     const [ showDelNote, setShowDelNote ] = useState<boolean>(false);
+
+    const [viewedNotes, setViewedNotes] = useState<ViewedNotes[]>([]);
 
     const [selected, setSelected] = useState<string[]>([]);
 
@@ -83,12 +90,33 @@ export default function Home() {
 
         setNotes(data);
     }
+    async function fetchViewedNote(id: string, i: number) {
+        const res = await fetch(`/api/note/${id}`, { method: 'GET' });
+        const data = await res.json();
+        
+        if (!data.note) {
+            const notes = JSON.parse(localStorage.getItem('viewedNotes') as string);
+            const updatedNotes = notes.filter((_: any, index: number) => index !== i);
+            localStorage.setItem('viewedNotes', JSON.stringify(updatedNotes));
+            return;
+        }
+
+        setViewedNotes(prev => [...(prev || []), { id: id, content: data.note.content }])
+    }
 
     useEffect(() => {
         (async () => {
             try {
                 await fetchUser();
                 await fetchNotes();
+
+                const rawNotes = localStorage.getItem('viewedNotes');
+                const viewedNotes: string[] = rawNotes ? JSON.parse(rawNotes) : [];
+                
+                for (const [i, el] of viewedNotes.entries()) {
+                    await fetchViewedNote(el, i);
+                }
+
             } catch (err) {
                 addError("Network error");
             } finally {
@@ -160,7 +188,7 @@ export default function Home() {
                         user.user ? (
                             <>
                             <div className={styles.user}>
-                                <Image 
+                                <Image
                                     src={`/api/user/${user.user.name}/avatar`}
                                     alt={`${user.user.name}'s avatar`}
                                     width={250}
@@ -188,7 +216,11 @@ export default function Home() {
                     )}
                     <div className={styles.viewedNotes}>
                         <h3>previously viewed notes</h3>
-                        <div className={styles.viewedNotesContainer}></div>
+                        <div className={styles.viewedNotesContainer}>
+                            {viewedNotes.map((e, i) => (
+                                <Link href={`/note/${e.id}`} key={i}> <ReactMarkdown>{e.content}</ReactMarkdown> </Link>
+                            ))}
+                        </div>
                     </div>
                     </div>
 
