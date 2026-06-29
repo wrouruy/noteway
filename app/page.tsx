@@ -130,7 +130,7 @@ export default function Home() {
             return [];
         const rows = note.split('\n');
         let res: string[] = [];
-        rows.forEach(e => res.push(cutString(e, 20)));
+        rows.forEach(e => res.push(e));
         return res;
     }
 

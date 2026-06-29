@@ -67,11 +67,12 @@
 }
 .viewedNotesContainer {
     width: 100%;
-    overflow-x: scroll;
     display: flex;
+    flex-direction: row;
     gap: 10px;
     justify-content: flex-start;
     align-items: flex-start;
+    white-space: nowrap;
     overflow-x: scroll;
 
     &:empty {
@@ -84,7 +85,7 @@
 
     a {
         width: 200px;
-        height: 150px;
+        height: 120px;
         padding: 10px;
         color: #F0F0F0;
         text-decoration: none;
@@ -93,6 +94,8 @@
         font-size: 10px;
         display: flex;
         flex-direction: column;
+        flex-shrink: 0;
+        overflow: hidden;
     }
 }
 
@@ -132,6 +135,7 @@
 .notesContainer {
     width: 100%;
     min-height: 250px;
+    max-height: 80vh;
     background-color: #141414;
     border-radius: 15px;
 
@@ -158,8 +162,8 @@
 }
 
 .noteItem {
-    width: 250px;
-    height: 200px;
+    width: 210px;
+    height: 160px;
 
     overflow: hidden;
     position: relative;

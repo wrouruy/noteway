@@ -3,7 +3,7 @@ import Image from   'next/image';
 import logoPic from '@/public/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faCoffee, faAngleRight } from '@fortawesome/free-solid-svg-icons'; 
+import { faEnvelope, faCoffee } from '@fortawesome/free-solid-svg-icons'; 
 import style from  './styles.module.scss';
 
 export default function Footer () {
@@ -29,14 +29,6 @@ export default function Footer () {
                         <a href="https://buymeacoffee.com/wrxxv"> <FontAwesomeIcon icon={faCoffee} /> </a>
                     </div>
                 </nav>
-
-                <div className={style.column}>
-                    <h3> subscribe for update </h3>
-                    <div className={style.row}>
-                        <input type="text" placeholder='enter your email...' ref={emaiInputRef}/>
-                        <button> <FontAwesomeIcon icon={faAngleRight} onClick={sendEmail}/> </button>
-                    </div>
-                </div>
             </div>
 
             <div className={style.listsContainer}>
@@ -54,6 +46,7 @@ export default function Footer () {
                     <ul>
                         <li> <a href='/'>Home </a> </li>
                         <li> <a href='/note'>Note</a> </li>
+                        <li> <a href='/settings'>Settings</a> </li>
                     </ul>
                 </div>
 
