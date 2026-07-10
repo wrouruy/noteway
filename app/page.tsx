@@ -9,7 +9,6 @@ import ConfirmPopup from '@/component/ConfirmPopup/ConfirmPopup';
 import ErrorPopup from "@/component/ErrorPopup/ErrorPopup";
 import Cmatrix from '@/component/Cmatrix/Cmatrix';
 import Footer from '@/component/Footer/Footer';
-import { cutString } from '@/lib/cutString';
 
 import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
