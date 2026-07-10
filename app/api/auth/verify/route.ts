@@ -5,11 +5,13 @@ import { v7 as uuidv7, validate } from "uuid";
 
 import { pool } from "@/lib/db";
 import type { PoolClient } from 'pg';
+import { getRedisClient } from "@/lib/redis";
+import { RedisClientType } from "redis";
 
 export async function POST(req: NextRequest) {
     const cookieStore = await cookies();
-
     const client = await pool.connect();
+    const redis = await getRedisClient();
 
     try {
         const { token } = await req.json();
@@ -21,9 +23,9 @@ export async function POST(req: NextRequest) {
 
         await client.query("BEGIN");
 
-        const verifyUser = await searchUserByToken(client, token);
+        const emailVerify = await searchUserByToken(redis, token);
 
-        if (!verifyUser){ // if token is invalid
+        if (!emailVerify){ // if token is invalid
             await client.query("ROLLBACK");
             return NextResponse.json(
                 { ok: false, message: 'invalid token' },
@@ -31,17 +33,15 @@ export async function POST(req: NextRequest) {
         }
 
         // creating user
-        const { email } = verifyUser;
-
         const user = await client.query(`
             SELECT * FROM users
-            WHERE email = $1`, [email]);
+            WHERE email = $1`, [emailVerify]);
 
         let userId;
 
         if (user.rows.length <= 0) { // creating user 
             const username = 'user-' + uuidv7().slice(0, 8);
-            userId = await createUser(client, username, email);
+            userId = await createUser(client, username, emailVerify);
         } else
             userId = user.rows[0].id;
         
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         await createSession(client, userId, sessionToken);
 
         // delete verify user from prev db
-        await deleteVerifyUser(client, verifyUser.id);
+        await deleteVerifyUser(redis, token);
 
         await client.query("COMMIT");
 
@@ -73,18 +73,15 @@ export async function POST(req: NextRequest) {
     } 
 }
 
-async function searchUserByToken (client: PoolClient, token: string) {
+async function searchUserByToken (redis: RedisClientType, token: string) {
     
-    // search for record by token
-    const res = await client.query(`
-        SELECT * FROM verify
-        WHERE token = $1 AND expires_at > NOW()`, [token]);
-
-    return res.rows[0]
+    // search verify user by token    
+    const email = await redis.get(`verify:${token}`);
+    return email;
 }
 
-async function deleteVerifyUser(client: PoolClient, id: number) {
-    await client.query(`DELETE FROM verify WHERE id=$1`, [id]);
+async function deleteVerifyUser(redis: RedisClientType, token: string) {
+    await redis.del(`verify:${token}`);
 }
 
 async function createUser(client: PoolClient, username: string, email: string) {
